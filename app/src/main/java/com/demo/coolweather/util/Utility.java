@@ -53,6 +53,7 @@ public class Utility {
             errorCode = jsonObject.getInt("error_code");
             if (errorCode == 0) {
                 JSONObject data = jsonObject.getJSONObject("result").getJSONObject("data");
+                Log.d(TAG, "parseJson: "+data.toString());
                 JSONObject todayJson = data.getJSONObject("realtime");
                 weather.setCityName(todayJson.getString("city_name"));
                 weather.setDate(todayJson.getString("date"));

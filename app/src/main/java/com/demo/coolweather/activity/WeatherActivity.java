@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,10 +36,15 @@ public class WeatherActivity extends Activity {
     private TextView date4;
     private TextView date5;
 
-    private TextView info2;
-    private TextView info3;
-    private TextView info4;
-    private TextView info5;
+//    private TextView info2;
+//    private TextView info3;
+//    private TextView info4;
+//    private TextView info5;
+
+    private ImageView image2;
+    private ImageView image3;
+    private ImageView image4;
+    private ImageView image5;
 
     private TextView temperature2;
     private TextView temperature3;
@@ -104,10 +110,15 @@ public class WeatherActivity extends Activity {
         date4.setText(prefs.getString("date4", ""));
         date5.setText(prefs.getString("date5", ""));
 
-        info2.setText(prefs.getString("info2", ""));
-        info3.setText(prefs.getString("info3", ""));
-        info4.setText(prefs.getString("info4", ""));
-        info5.setText(prefs.getString("info5", ""));
+//        info2.setText(prefs.getString("info2", ""));
+//        info3.setText(prefs.getString("info3", ""));
+//        info4.setText(prefs.getString("info4", ""));
+//        info5.setText(prefs.getString("info5", ""));
+
+        setImage(prefs.getString("info2", ""), 2);
+        setImage(prefs.getString("info3", ""), 3);
+        setImage(prefs.getString("info4", ""), 4);
+        setImage(prefs.getString("info5", ""), 5);
 
         temperature2.setText(prefs.getString("temperature2", ""));
         temperature3.setText(prefs.getString("temperature3", ""));
@@ -161,14 +172,83 @@ public class WeatherActivity extends Activity {
         date4 = (TextView) findViewById(R.id.data4);
         date5 = (TextView) findViewById(R.id.data5);
 
-        info2 = (TextView) findViewById(R.id.info2);
-        info3 = (TextView) findViewById(R.id.info3);
-        info4 = (TextView) findViewById(R.id.info4);
-        info5 = (TextView) findViewById(R.id.info5);
+//        info2 = (TextView) findViewById(R.id.info2);
+//        info3 = (TextView) findViewById(R.id.info3);
+//        info4 = (TextView) findViewById(R.id.info4);
+//        info5 = (TextView) findViewById(R.id.info5);
 
         temperature2 = (TextView) findViewById(R.id.temperature2);
         temperature3 = (TextView) findViewById(R.id.temperature3);
         temperature4 = (TextView) findViewById(R.id.temperature4);
         temperature5 = (TextView) findViewById(R.id.temperature5);
+
+        image2 = (ImageView) findViewById(R.id.image2);
+        image3 = (ImageView) findViewById(R.id.image3);
+        image4 = (ImageView) findViewById(R.id.image4);
+        image5 = (ImageView) findViewById(R.id.image5);
+    }
+
+    private void setImage(String info, int num) {
+        if (info.equals("晴")) {
+            switch (num) {
+                case 2:
+                    image2.setImageResource(R.drawable.a1);
+                    break;
+                case 3:
+                    image3.setImageResource(R.drawable.a1);
+                    break;
+                case 4:
+                    image4.setImageResource(R.drawable.a1);
+                    break;
+                case 5:
+                    image5.setImageResource(R.drawable.a1);
+                    break;
+            }
+        } else if (info.equals("多云")) {
+            switch (num) {
+                case 2:
+                    image2.setImageResource(R.drawable.a2);
+                    break;
+                case 3:
+                    image3.setImageResource(R.drawable.a2);
+                    break;
+                case 4:
+                    image4.setImageResource(R.drawable.a2);
+                    break;
+                case 5:
+                    image5.setImageResource(R.drawable.a2);
+                    break;
+            }
+        } else if (info.equals("阴")) {
+            switch (num) {
+                case 2:
+                    image2.setImageResource(R.drawable.a3);
+                    break;
+                case 3:
+                    image3.setImageResource(R.drawable.a3);
+                    break;
+                case 4:
+                    image4.setImageResource(R.drawable.a3);
+                    break;
+                case 5:
+                    image5.setImageResource(R.drawable.a3);
+                    break;
+            }
+        } else if (info.contains("雨")) {
+            switch (num) {
+                case 2:
+                    image2.setImageResource(R.drawable.a4);
+                    break;
+                case 3:
+                    image3.setImageResource(R.drawable.a4);
+                    break;
+                case 4:
+                    image4.setImageResource(R.drawable.a4);
+                    break;
+                case 5:
+                    image5.setImageResource(R.drawable.a4);
+                    break;
+            }
+        }
     }
 }
