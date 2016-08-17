@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -52,9 +53,9 @@ public class WeatherActivity extends Activity {
     private TextView temperature5;
 
     private ImageButton ibLeft;
-    private ImageButton ibRight;
     private static final String TAG = "WeatherActivity";
     private String cityName;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -62,7 +63,7 @@ public class WeatherActivity extends Activity {
             case 1:
                 if (resultCode == RESULT_OK) {
                     cityName = data.getStringExtra("city_name");
-                    getDataFromIntent();
+                    getDataFromInternet();
                 }
                 break;
             default:
@@ -76,7 +77,7 @@ public class WeatherActivity extends Activity {
         setContentView(R.layout.weather_layout);
         initView();
         showWeather();
-        getDataFromIntent();
+        getDataFromInternet();
         ibLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,11 +85,15 @@ public class WeatherActivity extends Activity {
                 startActivityForResult(intent, 1);
             }
         });
-        ibRight.setOnClickListener(new View.OnClickListener() {
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swip);
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light, android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onClick(View v) {
+            public void onRefresh() {
+                getDataFromInternet();
                 publishText.setText("更新中...");
-                getDataFromIntent();
             }
         });
     }
@@ -126,10 +131,10 @@ public class WeatherActivity extends Activity {
         temperature5.setText(prefs.getString("temperature5", ""));
     }
 
-    private void getDataFromIntent() {
+    private void getDataFromInternet() {
         if (cityName != null && !TextUtils.isEmpty(cityName)) {
             String address = HttpUtil.getUrl(cityName);
-            Log.d(TAG, "getDataFromIntent: " + address);
+            Log.d(TAG, "getDataFromInternet: " + address);
             HttpUtil.sendJsonRequest(address, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -144,22 +149,24 @@ public class WeatherActivity extends Activity {
                     }
                     Utility.saveWeatherInfo(WeatherActivity.this, weather);
                     showWeather();
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     publishText.setText("更新失败");
                     error.printStackTrace();
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             });
         } else {
             Toast.makeText(WeatherActivity.this, "请选择城市", Toast.LENGTH_SHORT).show();
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 
     private void initView() {
         ibLeft = (ImageButton) findViewById(R.id.ib_left);
-        ibRight = (ImageButton) findViewById(R.id.ib_right);
         cityNametext = (TextView) findViewById(R.id.city_name);
         publishText = (TextView) findViewById(R.id.publish_text);
         weatherDespText = (TextView) findViewById(R.id.weather_desp);

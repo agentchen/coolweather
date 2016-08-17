@@ -1,249 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swip"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/colorPrimary">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/ib_left"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/ic_list_white_36dp" />
-
-        <TextView
-            android:id="@+id/city_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="西安"
-            android:textColor="#fff"
-            android:textSize="24sp" />
-
-        <ImageButton
-            android:id="@+id/ib_right"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/ic_cached_white_36dp" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#27A5F9">
-
-        <TextView
-            android:id="@+id/publish_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_margin="10dp"
-            android:text="今天13:00发布"
-            android:textColor="#fff"
-            android:textSize="18sp" />
-
-        <LinearLayout
-            android:id="@+id/weather_info_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/publish_text"
-            android:layout_marginTop="60dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/current_date"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center"
-                android:text="2016-08-16"
-                android:textColor="#fff"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/weather_desp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="多云"
-                android:textColor="#fff"
-                android:textSize="34sp" />
-
-            <TextView
-                android:id="@+id/temp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="24℃"
-                android:textColor="#fff"
-                android:textSize="60sp" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="pm25"
-                    android:textColor="#fff"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/pm25"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="10dp"
-                    android:text="78  良"
-                    android:textColor="#fff"
-                    android:textSize="24sp" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <TableLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="36dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:stretchColumns="0,1,2,3">
+            android:layout_height="50dp"
+            android:background="@color/colorPrimary">
 
-            <TableRow>
+            <ImageButton
+                android:id="@+id/ib_left"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_list_white_36dp" />
 
-                <ImageView
-                    android:id="@+id/image2"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/a1" />
+            <TextView
+                android:id="@+id/city_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="西安"
+                android:textColor="#fff"
+                android:textSize="24sp" />
+        </RelativeLayout>
 
-                <ImageView
-                    android:id="@+id/image3"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/a2" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
-                <ImageView
-                    android:id="@+id/image4"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/a3" />
-
-                <ImageView
-                    android:id="@+id/image5"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/a4" />
-                <!--<TextView-->
-                <!--android:id="@+id/info2"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:text="多云"-->
-                <!--android:textColor="#fff"-->
-                <!--android:textSize="18dp" />-->
-
-                <!--<TextView-->
-                <!--android:id="@+id/info3"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:text="晴"-->
-                <!--android:gravity="center"-->
-                <!--android:textColor="#fff"-->
-                <!--android:textSize="18dp" />-->
-
-                <!--<TextView-->
-                <!--android:id="@+id/info4"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:text="小雨"-->
-                <!--android:textColor="#fff"-->
-                <!--android:textSize="18dp" />-->
-
-                <!--<TextView-->
-                <!--android:id="@+id/info5"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:text="阴"-->
-                <!--android:textColor="#fff"-->
-                <!--android:textSize="18dp" />-->
-            </TableRow>
-
-            <TableRow android:layout_marginTop="5dp">
-
-                <TextView
-                    android:id="@+id/temperature2"
-                    android:layout_gravity="center_horizontal"
-                    android:text="37"
-                    android:textColor="#fff"
-                    android:textSize="18dp" />
-
-                <TextView
-                    android:id="@+id/temperature3"
-                    android:layout_gravity="center_horizontal"
-                    android:text="32"
-                    android:textColor="#fff"
-                    android:textSize="18dp" />
-
-                <TextView
-                    android:id="@+id/temperature4"
-                    android:layout_gravity="center_horizontal"
-                    android:text="38"
-                    android:textColor="#fff"
-                    android:textSize="18dp" />
-
-                <TextView
-                    android:id="@+id/temperature5"
-                    android:layout_gravity="center_horizontal"
-                    android:text="40"
-                    android:textColor="#fff"
-                    android:textSize="18dp" />
-            </TableRow>
-
-            <TableRow android:layout_marginTop="5dp">
-
-                <TextView
-                    android:id="@+id/data2"
-                    android:layout_gravity="center_horizontal"
-                    android:text="明天"
-                    android:textColor="#fff"
-                    android:textSize="18dp" />
-
-                <TextView
-                    android:id="@+id/data3"
-
-                    android:layout_gravity="center_horizontal"
-                    android:text="周四"
-                    android:textColor="#fff"
-                    android:textSize="18dp" />
-
-                <TextView
-                    android:id="@+id/data4"
-                    android:layout_gravity="center_horizontal"
-                    android:text="周五"
-                    android:textColor="#fff"
-                    android:textSize="18dp" />
-
-                <TextView
-                    android:id="@+id/data5"
-                    android:layout_gravity="center_horizontal"
-                    android:text="周六"
-                    android:textColor="#fff"
-                    android:textSize="18dp" />
-            </TableRow>
-        </TableLayout>
-    </RelativeLayout>
-</LinearLayout>
+            <include layout="@layout/body_layout" />
+        </ScrollView>
+    </LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
