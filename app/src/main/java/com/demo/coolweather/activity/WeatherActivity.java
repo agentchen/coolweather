@@ -14,6 +14,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.demo.coolweather.R;
@@ -56,28 +60,37 @@ public class WeatherActivity extends Activity {
     private static final String TAG = "WeatherActivity";
     private String cityName;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private AMapLocationClient mlocationClient;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case 1:
-                if (resultCode == RESULT_OK) {
+        if (requestCode == 1) {
+            switch (resultCode) {
+                case RESULT_OK:
                     cityName = data.getStringExtra("city_name");
                     getDataFromInternet();
-                }
-                break;
-            default:
-                break;
+                    break;
+                case RESULT_FIRST_USER:
+                    autoLocationWeather();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weather_layout);
         initView();
         showWeather();
-        getDataFromInternet();
+        SharedPreferences sp = getSharedPreferences("setInfo", MODE_PRIVATE);
+        boolean isAutoLocation = sp.getBoolean("isChecked", false);
+        if (isAutoLocation) {
+            autoLocationWeather();
+        }
         ibLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,8 +111,13 @@ public class WeatherActivity extends Activity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
+    }
+
     private void showWeather() {
-        Log.d(TAG, "showWeather: ");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         cityName = prefs.getString("city_name", "");
 
@@ -134,12 +152,10 @@ public class WeatherActivity extends Activity {
     private void getDataFromInternet() {
         if (cityName != null && !TextUtils.isEmpty(cityName)) {
             String address = HttpUtil.getUrl(cityName);
-            Log.d(TAG, "getDataFromInternet: " + address);
             HttpUtil.sendJsonRequest(address, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    Log.d(TAG, "onResponse: " + response.toString());
-                    Weather weather = null;
+                    Weather weather;
                     try {
                         weather = Utility.parseJson(response);
                     } catch (MyException e) {
@@ -163,6 +179,63 @@ public class WeatherActivity extends Activity {
             Toast.makeText(WeatherActivity.this, "请选择城市", Toast.LENGTH_SHORT).show();
             swipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    private void autoLocationWeather() {
+        autoLocation(new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation aMapLocation) {
+                String mCityName;
+                if (aMapLocation != null) {
+                    if (aMapLocation.getErrorCode() == 0) {
+                        //定位成功回调信息，设置相关消息
+                        aMapLocation.getLocationType();//获取当前定位结果来源，如网络定位结果，详见定位类型表
+                        aMapLocation.getLatitude();//获取纬度
+                        aMapLocation.getLongitude();//获取经度
+                        aMapLocation.getAccuracy();//获取精度信息
+                        aMapLocation.getAddress();//地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
+                        mCityName = aMapLocation.getCity();//城市信息
+                        aMapLocation.getDistrict();//城区信息
+                        aMapLocation.getStreet();//街道信息
+                        if (mCityName.length() != 0) {
+                            cityName = mCityName;
+                            Log.d(TAG, "onLocationChanged: " + cityName);
+                            getDataFromInternet();
+                        }
+                    } else {
+                        publishText.setText("更新失败");
+                        //显示错误信息ErrCode是错误码，errInfo是错误信息，详见错误码表。
+                        Log.e("AmapError", "location Error, ErrCode:"
+                                + aMapLocation.getErrorCode() + ", errInfo:"
+                                + aMapLocation.getErrorInfo());
+                    }
+                }
+                mlocationClient.onDestroy();
+            }
+        });
+    }
+
+    private void autoLocation(AMapLocationListener aMapLocationListener) {
+        mlocationClient = new AMapLocationClient(this);
+        Log.d(TAG, "AMapLocationClient" + mlocationClient.toString());
+//初始化定位参数
+        AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
+//设置返回地址信息，默认为true
+        mLocationOption.setNeedAddress(true);
+//设置定位监听
+        mlocationClient.setLocationListener(aMapLocationListener);
+//设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+//设置定位间隔,单位毫秒,默认为2000ms
+        mLocationOption.setInterval(3000);
+//设置定位参数
+        mlocationClient.setLocationOption(mLocationOption);
+// 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
+// 注意设置合适的定位时间的间隔（最小间隔支持为2000ms），并且在合适时间调用stopLocation()方法来取消定位请求
+// 在定位结束后，在合适的生命周期调用onDestroy()方法
+// 在单次定位情况下，定位无论成功与否，都无需调用stopLocation()方法移除请求，定位sdk内部会移除
+//启动定位
+        mlocationClient.startLocation();
     }
 
     private void initView() {
@@ -257,5 +330,35 @@ public class WeatherActivity extends Activity {
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: ");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: ");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: ");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: ");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart: ");
     }
 }

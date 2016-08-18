@@ -17,6 +17,13 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="143dp" />
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:text="自动定位城市"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:id="@+id/btn_ok"
