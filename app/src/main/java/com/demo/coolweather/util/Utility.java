@@ -3,7 +3,6 @@ package com.demo.coolweather.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.demo.coolweather.model.MyException;
 import com.demo.coolweather.model.Weather;
@@ -12,7 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Utility {
-    private static final String TAG = "Utility";
 
     public static void saveWeatherInfo(Context context, Weather weather) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
@@ -43,7 +41,7 @@ public class Utility {
         editor.putString("temperature3", weather.getTemperature3() + "℃");
         editor.putString("temperature4", weather.getTemperature4() + "℃");
         editor.putString("temperature5", weather.getTemperature5() + "℃");
-        editor.commit();
+        editor.apply();
     }
 
     public static Weather parseJson(JSONObject jsonObject) throws MyException {
@@ -53,7 +51,6 @@ public class Utility {
             errorCode = jsonObject.getInt("error_code");
             if (errorCode == 0) {
                 JSONObject data = jsonObject.getJSONObject("result").getJSONObject("data");
-                Log.d(TAG, "parseJson: "+data.toString());
                 JSONObject todayJson = data.getJSONObject("realtime");
                 weather.setCityName(todayJson.getString("city_name"));
                 weather.setDate(todayJson.getString("date"));
@@ -61,25 +58,25 @@ public class Utility {
                 weather.setInfo(todayJson.getJSONObject("weather").getString("info"));
                 weather.setTemperature(todayJson.getJSONObject("weather").getString("temperature"));
 
-                if (!data.get("pm25").toString().equals("[]")){
+                if (!data.get("pm25").toString().equals("[]")) {
                     weather.setPm25(data.getJSONObject("pm25").getJSONObject("pm25").getString("pm25"));
                     weather.setQuality(data.getJSONObject("pm25").getJSONObject("pm25").getString("quality"));
                 }
 
-                weather.setDate2(data.getJSONArray("weather").getJSONObject(0).getString("week"));
-                weather.setDate3(data.getJSONArray("weather").getJSONObject(1).getString("week"));
-                weather.setDate4(data.getJSONArray("weather").getJSONObject(2).getString("week"));
-                weather.setDate5(data.getJSONArray("weather").getJSONObject(3).getString("week"));
+                weather.setDate2(data.getJSONArray("weather").getJSONObject(1).getString("week"));
+                weather.setDate3(data.getJSONArray("weather").getJSONObject(2).getString("week"));
+                weather.setDate4(data.getJSONArray("weather").getJSONObject(3).getString("week"));
+                weather.setDate5(data.getJSONArray("weather").getJSONObject(4).getString("week"));
 
-                weather.setInfo2(data.getJSONArray("weather").getJSONObject(0).getJSONObject("info").getJSONArray("day").getString(1));
-                weather.setInfo3(data.getJSONArray("weather").getJSONObject(1).getJSONObject("info").getJSONArray("day").getString(1));
-                weather.setInfo4(data.getJSONArray("weather").getJSONObject(2).getJSONObject("info").getJSONArray("day").getString(1));
-                weather.setInfo5(data.getJSONArray("weather").getJSONObject(3).getJSONObject("info").getJSONArray("day").getString(1));
+                weather.setInfo2(data.getJSONArray("weather").getJSONObject(1).getJSONObject("info").getJSONArray("day").getString(1));
+                weather.setInfo3(data.getJSONArray("weather").getJSONObject(2).getJSONObject("info").getJSONArray("day").getString(1));
+                weather.setInfo4(data.getJSONArray("weather").getJSONObject(3).getJSONObject("info").getJSONArray("day").getString(1));
+                weather.setInfo5(data.getJSONArray("weather").getJSONObject(4).getJSONObject("info").getJSONArray("day").getString(1));
 
-                weather.setTemperature2(data.getJSONArray("weather").getJSONObject(0).getJSONObject("info").getJSONArray("day").getString(2));
-                weather.setTemperature3(data.getJSONArray("weather").getJSONObject(1).getJSONObject("info").getJSONArray("day").getString(2));
-                weather.setTemperature4(data.getJSONArray("weather").getJSONObject(2).getJSONObject("info").getJSONArray("day").getString(2));
-                weather.setTemperature5(data.getJSONArray("weather").getJSONObject(3).getJSONObject("info").getJSONArray("day").getString(2));
+                weather.setTemperature2(data.getJSONArray("weather").getJSONObject(1).getJSONObject("info").getJSONArray("day").getString(2));
+                weather.setTemperature3(data.getJSONArray("weather").getJSONObject(2).getJSONObject("info").getJSONArray("day").getString(2));
+                weather.setTemperature4(data.getJSONArray("weather").getJSONObject(3).getJSONObject("info").getJSONArray("day").getString(2));
+                weather.setTemperature5(data.getJSONArray("weather").getJSONObject(4).getJSONObject("info").getJSONArray("day").getString(2));
             } else {
                 String errorInfo = jsonObject.getString("reason");
                 throw new MyException(errorInfo);
