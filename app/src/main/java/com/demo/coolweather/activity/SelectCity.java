@@ -38,11 +38,11 @@ public class SelectCity extends Activity {
                     Intent intent = new Intent();
                     intent.putExtra("city_name", cityName);
                     setResult(RESULT_OK, intent);
-                }else {
+                } else {
                     if (isChecked) {
-                        Intent intent=new Intent();
-                        intent.putExtra("isChecked",true);
-                        setResult(RESULT_FIRST_USER,intent);
+                        Intent intent = new Intent();
+                        intent.putExtra("isChecked", true);
+                        setResult(RESULT_FIRST_USER, intent);
                         finish();
                     }
                 }

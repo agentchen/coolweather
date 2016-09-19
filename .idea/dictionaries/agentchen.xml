@@ -2,6 +2,7 @@
   <dictionary name="agentchen">
     <words>
       <w>cityname</w>
+      <w>realtime</w>
     </words>
   </dictionary>
 </component>

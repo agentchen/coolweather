@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.demo.coolweather.model.MyException;
 import com.demo.coolweather.model.Weather;
 
 import org.json.JSONException;
@@ -44,7 +43,7 @@ public class Utility {
         editor.apply();
     }
 
-    public static Weather parseJson(JSONObject jsonObject) throws MyException {
+    public static Weather parseJson(JSONObject jsonObject) throws Exception {
         Weather weather = new Weather();
         int errorCode;
         try {
@@ -79,7 +78,7 @@ public class Utility {
                 weather.setTemperature5(data.getJSONArray("weather").getJSONObject(4).getJSONObject("info").getJSONArray("day").getString(2));
             } else {
                 String errorInfo = jsonObject.getString("reason");
-                throw new MyException(errorInfo);
+                throw new Exception(errorInfo);
             }
         } catch (JSONException e) {
             e.printStackTrace();

@@ -1,8 +1,11 @@
 package com.demo.coolweather.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -21,7 +24,6 @@ import com.amap.api.location.AMapLocationListener;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.demo.coolweather.R;
-import com.demo.coolweather.model.MyException;
 import com.demo.coolweather.model.Weather;
 import com.demo.coolweather.util.HttpUtil;
 import com.demo.coolweather.util.Utility;
@@ -41,10 +43,10 @@ public class WeatherActivity extends Activity {
     private TextView date4;
     private TextView date5;
 
-//    private TextView info2;
-//    private TextView info3;
-//    private TextView info4;
-//    private TextView info5;
+    private TextView info2;
+    private TextView info3;
+    private TextView info4;
+    private TextView info5;
 
     private ImageView image2;
     private ImageView image3;
@@ -133,10 +135,10 @@ public class WeatherActivity extends Activity {
         date4.setText(prefs.getString("date4", ""));
         date5.setText(prefs.getString("date5", ""));
 
-//        info2.setText(prefs.getString("info2", ""));
-//        info3.setText(prefs.getString("info3", ""));
-//        info4.setText(prefs.getString("info4", ""));
-//        info5.setText(prefs.getString("info5", ""));
+        info2.setText(prefs.getString("info2", ""));
+        info3.setText(prefs.getString("info3", ""));
+        info4.setText(prefs.getString("info4", ""));
+        info5.setText(prefs.getString("info5", ""));
 
         setImage(prefs.getString("info2", ""), 2);
         setImage(prefs.getString("info3", ""), 3);
@@ -158,7 +160,7 @@ public class WeatherActivity extends Activity {
                     Weather weather;
                     try {
                         weather = Utility.parseJson(response);
-                    } catch (MyException e) {
+                    } catch (Exception e) {
                         Toast.makeText(WeatherActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         cityName = cityNametext.getText().toString();
                         return;
@@ -173,6 +175,11 @@ public class WeatherActivity extends Activity {
                     publishText.setText("更新失败");
                     error.printStackTrace();
                     swipeRefreshLayout.setRefreshing(false);
+                    ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                    if (networkInfo == null || !networkInfo.isConnected()) {
+                        Toast.makeText(WeatherActivity.this, "没有网络连接", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         } else {
@@ -252,10 +259,10 @@ public class WeatherActivity extends Activity {
         date4 = (TextView) findViewById(R.id.data4);
         date5 = (TextView) findViewById(R.id.data5);
 
-//        info2 = (TextView) findViewById(R.id.info2);
-//        info3 = (TextView) findViewById(R.id.info3);
-//        info4 = (TextView) findViewById(R.id.info4);
-//        info5 = (TextView) findViewById(R.id.info5);
+        info2 = (TextView) findViewById(R.id.info2);
+        info3 = (TextView) findViewById(R.id.info3);
+        info4 = (TextView) findViewById(R.id.info4);
+        info5 = (TextView) findViewById(R.id.info5);
 
         temperature2 = (TextView) findViewById(R.id.temperature2);
         temperature3 = (TextView) findViewById(R.id.temperature3);

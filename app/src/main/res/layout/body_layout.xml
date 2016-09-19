@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/body"
     android:layout_width="match_parent"
     android:layout_height="0dp"
@@ -13,7 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_margin="10dp"
-        android:text="今天13:00发布"
         android:textColor="#fff"
         android:textSize="18sp" />
 
@@ -33,7 +31,6 @@
             android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:text="2016-08-16"
             android:textColor="#fff"
             android:textSize="18sp" />
 
@@ -42,7 +39,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="多云"
             android:textColor="#fff"
             android:textSize="34sp" />
 
@@ -51,7 +47,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="24℃"
             android:textColor="#fff"
             android:textSize="60sp" />
 
@@ -75,7 +70,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="10dp"
-                android:text="78  良"
                 android:textColor="#fff"
                 android:textSize="24sp" />
         </LinearLayout>
@@ -93,6 +87,33 @@
         android:stretchColumns="0,1,2,3">
 
         <TableRow>
+
+            <TextView
+                android:id="@+id/info2"
+                android:layout_gravity="center"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/info3"
+                android:layout_gravity="center"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/info4"
+                android:layout_gravity="center"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/info5"
+                android:layout_gravity="center"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+        </TableRow>
+
+        <TableRow android:layout_marginTop="5dp">
 
             <ImageView
                 android:id="@+id/image2"
@@ -151,63 +172,54 @@
 
             <TextView
                 android:id="@+id/temperature2"
-                android:layout_gravity="center_horizontal"
-                android:text="37"
+                android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18dp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/temperature3"
-                android:layout_gravity="center_horizontal"
-                android:text="32"
+                android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18dp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/temperature4"
-                android:layout_gravity="center_horizontal"
-                android:text="38"
+                android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18dp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/temperature5"
-                android:layout_gravity="center_horizontal"
-                android:text="40"
+                android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18dp" />
+                android:textSize="18sp" />
         </TableRow>
 
         <TableRow android:layout_marginTop="5dp">
 
             <TextView
                 android:id="@+id/data2"
-                android:layout_gravity="center_horizontal"
-                android:text="明天"
+                android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18dp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/data3"
-
-                android:layout_gravity="center_horizontal"
-                android:text="周四"
+                android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18dp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/data4"
-                android:layout_gravity="center_horizontal"
-                android:text="周五"
+                android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18dp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/data5"
-                android:layout_gravity="center_horizontal"
-                android:text="周六"
+                android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18dp" />
+                android:textSize="18sp" />
         </TableRow>
     </TableLayout>
 </RelativeLayout>
