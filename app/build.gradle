@@ -25,4 +25,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile files('libs/AMap_Location_V2.8.0_20160811.jar')
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha8'
 }

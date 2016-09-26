@@ -140,10 +140,10 @@ public class WeatherActivity extends Activity {
         info4.setText(prefs.getString("info4", ""));
         info5.setText(prefs.getString("info5", ""));
 
-        setImage(prefs.getString("info2", ""), 2);
-        setImage(prefs.getString("info3", ""), 3);
-        setImage(prefs.getString("info4", ""), 4);
-        setImage(prefs.getString("info5", ""), 5);
+        setImage(prefs.getString("info2", ""), image2);
+        setImage(prefs.getString("info3", ""), image3);
+        setImage(prefs.getString("info4", ""), image4);
+        setImage(prefs.getString("info5", ""), image5);
 
         temperature2.setText(prefs.getString("temperature2", ""));
         temperature3.setText(prefs.getString("temperature3", ""));
@@ -275,97 +275,15 @@ public class WeatherActivity extends Activity {
         image5 = (ImageView) findViewById(R.id.image5);
     }
 
-    private void setImage(String info, int num) {
+    private void setImage(String info, ImageView imageView) {
         if (info.equals("晴")) {
-            switch (num) {
-                case 2:
-                    image2.setImageResource(R.drawable.a1);
-                    break;
-                case 3:
-                    image3.setImageResource(R.drawable.a1);
-                    break;
-                case 4:
-                    image4.setImageResource(R.drawable.a1);
-                    break;
-                case 5:
-                    image5.setImageResource(R.drawable.a1);
-                    break;
-            }
+            imageView.setImageResource(R.drawable.a1);
         } else if (info.equals("多云")) {
-            switch (num) {
-                case 2:
-                    image2.setImageResource(R.drawable.a2);
-                    break;
-                case 3:
-                    image3.setImageResource(R.drawable.a2);
-                    break;
-                case 4:
-                    image4.setImageResource(R.drawable.a2);
-                    break;
-                case 5:
-                    image5.setImageResource(R.drawable.a2);
-                    break;
-            }
+            imageView.setImageResource(R.drawable.a2);
         } else if (info.equals("阴")) {
-            switch (num) {
-                case 2:
-                    image2.setImageResource(R.drawable.a3);
-                    break;
-                case 3:
-                    image3.setImageResource(R.drawable.a3);
-                    break;
-                case 4:
-                    image4.setImageResource(R.drawable.a3);
-                    break;
-                case 5:
-                    image5.setImageResource(R.drawable.a3);
-                    break;
-            }
+            imageView.setImageResource(R.drawable.a3);
         } else if (info.contains("雨")) {
-            switch (num) {
-                case 2:
-                    image2.setImageResource(R.drawable.a4);
-                    break;
-                case 3:
-                    image3.setImageResource(R.drawable.a4);
-                    break;
-                case 4:
-                    image4.setImageResource(R.drawable.a4);
-                    break;
-                case 5:
-                    image5.setImageResource(R.drawable.a4);
-                    break;
-            }
+            imageView.setImageResource(R.drawable.a4);
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart: ");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume: ");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause: ");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: ");
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG, "onRestart: ");
     }
 }
