@@ -83,7 +83,6 @@ public class WeatherActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weather_layout);
         initView();
@@ -101,14 +100,12 @@ public class WeatherActivity extends Activity {
             }
         });
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swip);
-        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light, android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getDataFromInternet();
                 publishText.setText("更新中...");
+                getDataFromInternet();
             }
         });
     }
@@ -154,13 +151,16 @@ public class WeatherActivity extends Activity {
     private void getDataFromInternet() {
         if (cityName != null && !TextUtils.isEmpty(cityName)) {
             String address = HttpUtil.getUrl(cityName);
+            Log.d(TAG, "getDataFromInternet: ");
             HttpUtil.sendJsonRequest(address, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
+                    Log.d(TAG, "onResponse: " + response.toString());
                     Weather weather;
                     try {
                         weather = Utility.parseJson(response);
                     } catch (Exception e) {
+                        Log.d(TAG, "onResponse: " + e.getMessage());
                         Toast.makeText(WeatherActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         cityName = cityNametext.getText().toString();
                         return;
@@ -172,9 +172,9 @@ public class WeatherActivity extends Activity {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    swipeRefreshLayout.setRefreshing(false);
                     publishText.setText("更新失败");
                     error.printStackTrace();
-                    swipeRefreshLayout.setRefreshing(false);
                     ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
                     if (networkInfo == null || !networkInfo.isConnected()) {
@@ -183,27 +183,21 @@ public class WeatherActivity extends Activity {
                 }
             });
         } else {
-            Toast.makeText(WeatherActivity.this, "请选择城市", Toast.LENGTH_SHORT).show();
             swipeRefreshLayout.setRefreshing(false);
+            Toast.makeText(WeatherActivity.this, "请选择城市", Toast.LENGTH_SHORT).show();
+            publishText.setText("更新失败");
         }
     }
 
     private void autoLocationWeather() {
+        Log.d(TAG, "autoLocationWeather(): ");
         autoLocation(new AMapLocationListener() {
             @Override
             public void onLocationChanged(AMapLocation aMapLocation) {
                 String mCityName;
                 if (aMapLocation != null) {
                     if (aMapLocation.getErrorCode() == 0) {
-                        //定位成功回调信息，设置相关消息
-                        aMapLocation.getLocationType();//获取当前定位结果来源，如网络定位结果，详见定位类型表
-                        aMapLocation.getLatitude();//获取纬度
-                        aMapLocation.getLongitude();//获取经度
-                        aMapLocation.getAccuracy();//获取精度信息
-                        aMapLocation.getAddress();//地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
                         mCityName = aMapLocation.getCity();//城市信息
-                        aMapLocation.getDistrict();//城区信息
-                        aMapLocation.getStreet();//街道信息
                         if (mCityName.length() != 0) {
                             cityName = mCityName;
                             Log.d(TAG, "onLocationChanged: " + cityName);
@@ -276,6 +270,7 @@ public class WeatherActivity extends Activity {
     }
 
     private void setImage(String info, ImageView imageView) {
+//        现在只有四种图片
         if (info.equals("晴")) {
             imageView.setImageResource(R.drawable.a1);
         } else if (info.equals("多云")) {
