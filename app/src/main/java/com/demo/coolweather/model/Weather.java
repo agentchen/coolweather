@@ -1,26 +1,26 @@
 package com.demo.coolweather.model;
 
-public class Weather {
-    String cityName;
-    String time;
-    String date;
-    String info;
-    String temperature;
-    String pm25;
-    String quality;
+import java.io.Serializable;
 
-    String date2;
-    String info2;
-    String temperature2;
-    String date3;
-    String info3;
-    String temperature3;
-    String date4;
-    String info4;
-    String temperature4;
-    String date5;
-    String info5;
-    String temperature5;
+public class Weather implements Serializable{
+    private String cityName;
+    private String time;
+    private String date;
+    private String info;
+    private String temperature;
+    private String pm25;
+    private String quality;
+    private String info2;
+    private String temperature2;
+    private String date3;
+    private String info3;
+    private String temperature3;
+    private String date4;
+    private String info4;
+    private String temperature4;
+    private String date5;
+    private String info5;
+    private String temperature5;
 
     public void setCityName(String cityName) {
         this.cityName = cityName;
@@ -48,10 +48,6 @@ public class Weather {
 
     public void setQuality(String quality) {
         this.quality = quality;
-    }
-
-    public void setDate2(String date2) {
-        this.date2 = date2;
     }
 
     public void setInfo2(String info2) {
@@ -103,7 +99,7 @@ public class Weather {
     }
 
     public String getTime() {
-        return time;
+        return time + "发布";
     }
 
     public String getDate() {
@@ -115,7 +111,7 @@ public class Weather {
     }
 
     public String getTemperature() {
-        return temperature;
+        return temperature + "℃";
     }
 
     public String getPm25() {
@@ -126,20 +122,16 @@ public class Weather {
         return quality;
     }
 
-    public String getDate2() {
-        return date2;
-    }
-
     public String getInfo2() {
         return info2;
     }
 
     public String getTemperature2() {
-        return temperature2;
+        return temperature2 + "℃";
     }
 
     public String getDate3() {
-        return date3;
+        return "周" + date3;
     }
 
     public String getInfo3() {
@@ -147,11 +139,11 @@ public class Weather {
     }
 
     public String getTemperature3() {
-        return temperature3;
+        return temperature3 + "℃";
     }
 
     public String getDate4() {
-        return date4;
+        return "周" + date4;
     }
 
     public String getInfo4() {
@@ -159,11 +151,11 @@ public class Weather {
     }
 
     public String getTemperature4() {
-        return temperature4;
+        return temperature4 + "℃";
     }
 
     public String getDate5() {
-        return date5;
+        return "周" + date5;
     }
 
     public String getInfo5() {
@@ -171,6 +163,6 @@ public class Weather {
     }
 
     public String getTemperature5() {
-        return temperature5;
+        return temperature5 + "℃";
     }
 }

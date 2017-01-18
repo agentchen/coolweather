@@ -1,15 +1,11 @@
 package com.demo.coolweather.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -21,17 +17,14 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.demo.coolweather.R;
 import com.demo.coolweather.model.Weather;
+import com.demo.coolweather.net.OkManager;
 import com.demo.coolweather.util.HttpUtil;
 import com.demo.coolweather.util.Utility;
 
-import org.json.JSONObject;
-
-public class WeatherActivity extends Activity {
-    private TextView cityNametext;
+public class WeatherActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener {
+    private TextView cityNameText;
     private TextView publishText;
     private TextView weatherDespText;
     private TextView tempText;
@@ -61,8 +54,38 @@ public class WeatherActivity extends Activity {
     private ImageButton ibLeft;
     private static final String TAG = "WeatherActivity";
     private String cityName;
+    private Weather nowWeather;
     private SwipeRefreshLayout swipeRefreshLayout;
     private AMapLocationClient mlocationClient;
+    private OkManager okManager;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.weather_layout);
+        initView();
+        SharedPreferences sp = getSharedPreferences("setInfo", MODE_PRIVATE);
+        if (sp.getBoolean("isChecked", false)) {
+            autoLocationWeather();
+        }
+        ibLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WeatherActivity.this, SelectCity.class);
+                startActivityForResult(intent, 1);
+            }
+        });
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swip);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        showWeatherCatch();
+    }
+
+    @Override
+    public void onRefresh() {
+        publishText.setText("更新中...");
+        getDataFromInternet();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -82,104 +105,70 @@ public class WeatherActivity extends Activity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.weather_layout);
-        initView();
-        showWeather();
-        SharedPreferences sp = getSharedPreferences("setInfo", MODE_PRIVATE);
-        boolean isAutoLocation = sp.getBoolean("isChecked", false);
-        if (isAutoLocation) {
-            autoLocationWeather();
-        }
-        ibLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(WeatherActivity.this, SelectCity.class);
-                startActivityForResult(intent, 1);
-            }
-        });
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swip);
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                publishText.setText("更新中...");
-                getDataFromInternet();
-            }
-        });
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: ");
     }
 
+    private void showWeatherCatch() {
+        Utility.getWeatherInfo(this, new Utility.CallBack() {
+            @Override
+            public void onFinish(Weather weather) {
+                nowWeather = weather;
+                showWeather();
+            }
+        });
+    }
+
     private void showWeather() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        cityName = prefs.getString("city_name", "");
+        if (nowWeather == null)
+            return;
+        cityName = nowWeather.getCityName();
 
-        cityNametext.setText(prefs.getString("city_name", ""));
-        publishText.setText("今天" + prefs.getString("time", "") + "发布");
-        currentDateText.setText(prefs.getString("date", ""));
-        weatherDespText.setText(prefs.getString("info", ""));
-        tempText.setText(prefs.getString("temperature", ""));
-        pm25.setText(prefs.getString("pm25", ""));
+        cityNameText.setText(nowWeather.getCityName());
+        publishText.setText(nowWeather.getTime());
+        currentDateText.setText(nowWeather.getDate());
+        weatherDespText.setText(nowWeather.getInfo());
+        tempText.setText(nowWeather.getTemperature());
+        pm25.setText(nowWeather.getPm25() + " " + nowWeather.getQuality());
 
-        date2.setText(prefs.getString("date2", ""));
-        date3.setText(prefs.getString("date3", ""));
-        date4.setText(prefs.getString("date4", ""));
-        date5.setText(prefs.getString("date5", ""));
+        date2.setText("明天");
+        date3.setText(nowWeather.getDate3());
+        date4.setText(nowWeather.getDate4());
+        date5.setText(nowWeather.getDate5());
 
-        info2.setText(prefs.getString("info2", ""));
-        info3.setText(prefs.getString("info3", ""));
-        info4.setText(prefs.getString("info4", ""));
-        info5.setText(prefs.getString("info5", ""));
+        info2.setText(nowWeather.getInfo2());
+        info3.setText(nowWeather.getInfo3());
+        info4.setText(nowWeather.getInfo4());
+        info5.setText(nowWeather.getInfo5());
 
-        setImage(prefs.getString("info2", ""), image2);
-        setImage(prefs.getString("info3", ""), image3);
-        setImage(prefs.getString("info4", ""), image4);
-        setImage(prefs.getString("info5", ""), image5);
+        setImage(nowWeather.getInfo2(), image2);
+        setImage(nowWeather.getInfo3(), image3);
+        setImage(nowWeather.getInfo4(), image4);
+        setImage(nowWeather.getInfo5(), image5);
 
-        temperature2.setText(prefs.getString("temperature2", ""));
-        temperature3.setText(prefs.getString("temperature3", ""));
-        temperature4.setText(prefs.getString("temperature4", ""));
-        temperature5.setText(prefs.getString("temperature5", ""));
+        temperature2.setText(nowWeather.getTemperature2());
+        temperature3.setText(nowWeather.getTemperature3());
+        temperature4.setText(nowWeather.getTemperature4());
+        temperature5.setText(nowWeather.getTemperature5());
     }
 
     private void getDataFromInternet() {
-        if (cityName != null && !TextUtils.isEmpty(cityName)) {
+        if (cityName != null && !cityName.isEmpty()) {
             String address = HttpUtil.getUrl(cityName);
-            Log.d(TAG, "getDataFromInternet: ");
-            HttpUtil.sendJsonRequest(address, new Response.Listener<JSONObject>() {
+            okManager = OkManager.getInstance();
+            okManager.asyncObjectGet(address, new OkManager.Fun5<Weather>() {
                 @Override
-                public void onResponse(JSONObject response) {
-                    Log.d(TAG, "onResponse: " + response.toString());
-                    Weather weather;
-                    try {
-                        weather = Utility.parseJson(response);
-                    } catch (Exception e) {
-                        Log.d(TAG, "onResponse: " + e.getMessage());
-                        Toast.makeText(WeatherActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        cityName = cityNametext.getText().toString();
-                        return;
-                    }
-                    Utility.saveWeatherInfo(WeatherActivity.this, weather);
+                public void onResponse(Weather weather) {
+                    nowWeather = weather;
                     showWeather();
                     swipeRefreshLayout.setRefreshing(false);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    swipeRefreshLayout.setRefreshing(false);
-                    publishText.setText("更新失败");
-                    error.printStackTrace();
-                    ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-                    if (networkInfo == null || !networkInfo.isConnected()) {
-                        Toast.makeText(WeatherActivity.this, "没有网络连接", Toast.LENGTH_SHORT).show();
-                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Utility.saveWeatherInfo(WeatherActivity.this, nowWeather);
+                        }
+                    }).start();
                 }
             });
         } else {
@@ -190,7 +179,6 @@ public class WeatherActivity extends Activity {
     }
 
     private void autoLocationWeather() {
-        Log.d(TAG, "autoLocationWeather(): ");
         autoLocation(new AMapLocationListener() {
             @Override
             public void onLocationChanged(AMapLocation aMapLocation) {
@@ -200,15 +188,16 @@ public class WeatherActivity extends Activity {
                         mCityName = aMapLocation.getCity();//城市信息
                         if (mCityName.length() != 0) {
                             cityName = mCityName;
-                            Log.d(TAG, "onLocationChanged: " + cityName);
-                            getDataFromInternet();
+                            swipeRefreshLayout.setRefreshing(true);
+                            onRefresh();
                         }
                     } else {
-                        publishText.setText("更新失败");
                         //显示错误信息ErrCode是错误码，errInfo是错误信息，详见错误码表。
                         Log.e("AmapError", "location Error, ErrCode:"
                                 + aMapLocation.getErrorCode() + ", errInfo:"
                                 + aMapLocation.getErrorInfo());
+                        Snackbar.make(cityNameText, aMapLocation.getErrorInfo().split(" ")[0]
+                                , Snackbar.LENGTH_SHORT).show();
                     }
                 }
                 mlocationClient.onDestroy();
@@ -241,7 +230,7 @@ public class WeatherActivity extends Activity {
 
     private void initView() {
         ibLeft = (ImageButton) findViewById(R.id.ib_left);
-        cityNametext = (TextView) findViewById(R.id.city_name);
+        cityNameText = (TextView) findViewById(R.id.city_name);
         publishText = (TextView) findViewById(R.id.publish_text);
         weatherDespText = (TextView) findViewById(R.id.weather_desp);
         tempText = (TextView) findViewById(R.id.temp);
@@ -271,6 +260,9 @@ public class WeatherActivity extends Activity {
 
     private void setImage(String info, ImageView imageView) {
 //        现在只有四种图片
+        if (info == null || info.isEmpty()) {
+            return;
+        }
         if (info.equals("晴")) {
             imageView.setImageResource(R.drawable.a1);
         } else if (info.equals("多云")) {
