@@ -19,7 +19,7 @@ import java.io.ObjectOutputStream;
 public class Utility {
 
 
-    public static void getWeatherInfo(final Context context, final CallBack callBack) {
+    public static void getWeatherInfo(final Context context, final IOCallBack IOCallBack) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -31,7 +31,7 @@ public class Utility {
                         FileInputStream fis = new FileInputStream(file);
                         ois = new ObjectInputStream(fis);
                         weather = (Weather) ois.readObject();
-                        goToUiThread(weather, callBack);
+                        goToUiThread(weather, IOCallBack);
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     } finally {
@@ -48,11 +48,11 @@ public class Utility {
         }).start();
     }
 
-    private static void goToUiThread(final Weather weather, final CallBack callBack) {
+    private static void goToUiThread(final Weather weather, final IOCallBack IOCallBack) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                callBack.onFinish(weather);
+                IOCallBack.onFinish(weather);
             }
         });
     }
@@ -77,10 +77,11 @@ public class Utility {
     }
 
     public static Weather parseJson(JSONObject jsonObject) throws JSONException {
-        Weather weather = new Weather();
+        Weather weather = null;
         int errorCode;
         errorCode = jsonObject.getInt("error_code");
         if (errorCode == 0) {
+            weather = new Weather();
             JSONObject data = jsonObject.getJSONObject("result").getJSONObject("data");
             JSONObject todayJson = data.getJSONObject("realtime");
             weather.setCityName(todayJson.getString("city_name"));
@@ -110,7 +111,7 @@ public class Utility {
         return weather;
     }
 
-    public interface CallBack {
+    public interface IOCallBack {
         void onFinish(Weather weather);
     }
 }

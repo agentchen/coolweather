@@ -20,6 +20,7 @@ import com.amap.api.location.AMapLocationListener;
 import com.demo.coolweather.R;
 import com.demo.coolweather.model.Weather;
 import com.demo.coolweather.net.OkManager;
+import com.demo.coolweather.net.callback.WeatherCallBack;
 import com.demo.coolweather.util.HttpUtil;
 import com.demo.coolweather.util.Utility;
 
@@ -111,7 +112,7 @@ public class WeatherActivity extends Activity implements SwipeRefreshLayout.OnRe
     }
 
     private void showWeatherCatch() {
-        Utility.getWeatherInfo(this, new Utility.CallBack() {
+        Utility.getWeatherInfo(this, new Utility.IOCallBack() {
             @Override
             public void onFinish(Weather weather) {
                 nowWeather = weather;
@@ -157,18 +158,28 @@ public class WeatherActivity extends Activity implements SwipeRefreshLayout.OnRe
         if (cityName != null && !cityName.isEmpty()) {
             String address = HttpUtil.getUrl(cityName);
             okManager = OkManager.getInstance();
-            okManager.asyncObjectGet(address, new OkManager.Fun5<Weather>() {
+            okManager.asyncGet(address, new WeatherCallBack() {
                 @Override
-                public void onResponse(Weather weather) {
-                    nowWeather = weather;
-                    showWeather();
+                public void onResponse(Weather response) {
+                    if (response != null) {
+                        nowWeather = response;
+                        showWeather();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Utility.saveWeatherInfo(WeatherActivity.this, nowWeather);
+                            }
+                        }).start();
+                    } else {
+                        publishText.setText("更新失败");
+                    }
                     swipeRefreshLayout.setRefreshing(false);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Utility.saveWeatherInfo(WeatherActivity.this, nowWeather);
-                        }
-                    }).start();
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    publishText.setText("更新失败");
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             });
         } else {

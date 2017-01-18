@@ -1,22 +1,19 @@
 package com.demo.coolweather.net;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.demo.coolweather.model.Weather;
-import com.demo.coolweather.util.Utility;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.demo.coolweather.net.callback.CallBack;
 
 import java.io.IOException;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -45,8 +42,15 @@ public class OkManager {
         return okManager;
     }
 
-    public void asyncStringGet(String url, final Func1 callBack) {
-        Request request = new Request.Builder().url(url).build();
+    public void asyncPost(String url, Map<String, String> params, final CallBack callBack) {
+        FormBody.Builder formBuilder = new FormBody.Builder();
+        if (params != null && !params.isEmpty()) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                formBuilder.add(entry.getKey(), entry.getValue());
+            }
+        }
+        RequestBody RequestBody = formBuilder.build();
+        Request request = new Request.Builder().url(url).post(RequestBody).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -55,164 +59,41 @@ public class OkManager {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (response != null && response.isSuccessful()) {
-                    onSuccessStringMethod(response.body().string(), callBack);
-                }
-            }
-        });
-    }
-
-    public void asyncJsonObjectGet(String url, final Func2 callBack) {
-        Request request = new Request.Builder().url(url).build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response != null && response.isSuccessful()) {
-                    try {
-                        onSuccessJsonObjectMethod(new JSONObject(response.body().string()), callBack);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                final Object object = callBack.parseResponse(response);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callBack.onResponse(object);
                     }
-                }
+                });
             }
         });
     }
 
-    public void asyncBytesGet(String url, final Func3 callBack) {
+    public void asyncGet(String url, final CallBack callBack) {
         Request request = new Request.Builder().url(url).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(Call call, final IOException e) {
                 e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response != null && response.isSuccessful()) {
-                    onSuccessBytesMethod(response.body().bytes(), callBack);
-                }
-            }
-        });
-    }
-
-    public void asyncBitmapGet(String url, final Func4 callBack) {
-        final Request request = new Request.Builder().url(url).build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response != null && response.isSuccessful()) {
-                    byte[] bytes = response.body().bytes();
-                    onSuccessBitmapMethod(BitmapFactory
-                            .decodeByteArray(bytes, 0, bytes.length), callBack);
-                }
-            }
-        });
-    }
-
-    public void asyncObjectGet(String url, final Fun5<Weather> callBack) {
-        Request request = new Request.Builder().url(url).build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response != null && response.isSuccessful()) {
-                    try {
-                        onSuccessObjectMethod(Utility.parseJson
-                                (new JSONObject(response.body().string())), callBack);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callBack.onError(e);
                     }
-                }
+                });
             }
-        });
-    }
 
-    private void onSuccessStringMethod(final String result, final Func1 callBack) {
-        handler.post(new Runnable() {
             @Override
-            public void run() {
-                if (callBack != null) {
-                    callBack.onResponse(result);
-                }
+            public void onResponse(Call call, Response response) throws IOException {
+                final Object object = callBack.parseResponse(response);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callBack.onResponse(object);
+                    }
+                });
             }
         });
-    }
-
-    private void onSuccessJsonObjectMethod(final JSONObject jsonObject, final Func2 callBack) throws JSONException {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (callBack != null) {
-                    callBack.onResponse(jsonObject);
-                }
-            }
-        });
-    }
-
-    private void onSuccessObjectMethod(final Weather weather, final Fun5<Weather> callBack) throws JSONException {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (callBack != null) {
-                    callBack.onResponse(weather);
-                }
-            }
-        });
-    }
-
-    private void onSuccessBytesMethod(final byte[] bytes, final Func3 callBack) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (callBack != null) {
-                    callBack.onResponse(bytes);
-                }
-            }
-        });
-    }
-
-    private void onSuccessBitmapMethod(final Bitmap bitmap, final Func4 callBack) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (callBack != null) {
-                    callBack.onResponse(bitmap);
-                }
-            }
-        });
-    }
-
-    public interface Func1 {
-        void onResponse(String result);
-    }
-
-    public interface Func2 {
-        void onResponse(JSONObject jsonObject);
-    }
-
-    public interface Func3 {
-        void onResponse(byte[] bytes);
-    }
-
-    public interface Func4 {
-        void onResponse(Bitmap bitmap);
-    }
-
-    public interface Fun5<T extends Weather> {
-        void onResponse(T weather);
     }
 }
