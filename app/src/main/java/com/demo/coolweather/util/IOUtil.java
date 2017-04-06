@@ -16,43 +16,19 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class Utility {
+public class IOUtil {
+    private static Handler mHandler = new Handler(Looper.getMainLooper());
 
 
-    public static void getWeatherInfo(final Context context, final IOCallBack IOCallBack) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Weather weather;
-                File file = new File(context.getFilesDir(), "weather");
-                if (file.exists()) {
-                    ObjectInputStream ois = null;
-                    try {
-                        FileInputStream fis = new FileInputStream(file);
-                        ois = new ObjectInputStream(fis);
-                        weather = (Weather) ois.readObject();
-                        goToUiThread(weather, IOCallBack);
-                    } catch (IOException | ClassNotFoundException e) {
-                        e.printStackTrace();
-                    } finally {
-                        try {
-                            if (ois != null) {
-                                ois.close();
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }).start();
+    public static void getWeatherInfo(final Context context, final IOCallBack ioCallBack) {
+        new MyThread(context, ioCallBack).start();
     }
 
-    private static void goToUiThread(final Weather weather, final IOCallBack IOCallBack) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+    private static void goToUiThread(final Weather weather, final IOCallBack ioCallBack) {
+        mHandler.post(new Runnable() {
             @Override
             public void run() {
-                IOCallBack.onFinish(weather);
+                ioCallBack.onFinish(weather);
             }
         });
     }
@@ -113,5 +89,41 @@ public class Utility {
 
     public interface IOCallBack {
         void onFinish(Weather weather);
+    }
+
+    private static class MyThread extends Thread {
+        private Context mContext;
+        private IOCallBack mIOCallBack;
+
+        MyThread(Context context, IOCallBack ioCallBack) {
+            super();
+            mContext = context;
+            mIOCallBack = ioCallBack;
+        }
+
+        @Override
+        public void run() {
+            Weather weather;
+            File file = new File(mContext.getFilesDir(), "weather");
+            if (file.exists()) {
+                ObjectInputStream ois = null;
+                try {
+                    FileInputStream fis = new FileInputStream(file);
+                    ois = new ObjectInputStream(fis);
+                    weather = (Weather) ois.readObject();
+                    goToUiThread(weather, mIOCallBack);
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (ois != null) {
+                            ois.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 }

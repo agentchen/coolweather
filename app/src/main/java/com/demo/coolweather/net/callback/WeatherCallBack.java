@@ -1,7 +1,7 @@
 package com.demo.coolweather.net.callback;
 
 import com.demo.coolweather.model.Weather;
-import com.demo.coolweather.util.Utility;
+import com.demo.coolweather.util.IOUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,7 +20,7 @@ public abstract class WeatherCallBack implements CallBack<Weather> {
     public Weather parseResponse(Response response) {
         if (response != null && response.isSuccessful()) {
             try {
-                return Utility.parseJson(new JSONObject(response.body().string()));
+                return IOUtil.parseJson(new JSONObject(response.body().string()));
             } catch (JSONException | IOException e) {
                 e.printStackTrace();
             }

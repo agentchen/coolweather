@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/body"
     android:layout_width="match_parent"
@@ -11,10 +12,10 @@
         android:id="@+id/publish_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_margin="10dp"
         android:textColor="#fff"
-        android:textSize="18sp" />
+        android:textSize="18sp"/>
 
     <LinearLayout
         android:id="@+id/weather_info_layout"
@@ -33,7 +34,7 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center"
             android:textColor="#fff"
-            android:textSize="18sp" />
+            android:textSize="18sp"/>
 
         <TextView
             android:id="@+id/weather_desp"
@@ -41,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:textColor="#fff"
-            android:textSize="34sp" />
+            android:textSize="34sp"/>
 
         <TextView
             android:id="@+id/temp"
@@ -49,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:textColor="#fff"
-            android:textSize="60sp" />
+            android:textSize="60sp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -61,18 +62,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="pm25"
+                android:text="@string/pm25"
                 android:textColor="#fff"
-                android:textSize="12sp" />
+                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/pm25"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:textColor="#fff"
-                android:textSize="24sp" />
+                android:textSize="24sp"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -93,25 +94,25 @@
                 android:id="@+id/info2"
                 android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/info3"
                 android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/info4"
                 android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/info5"
                 android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
         </TableRow>
 
         <TableRow android:layout_marginTop="5dp">
@@ -120,53 +121,25 @@
                 android:id="@+id/image2"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                tools:src="@drawable/a1" />
+                tools:src="@drawable/ic_weather_04"/>
 
             <ImageView
                 android:id="@+id/image3"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                tools:src="@drawable/a2" />
+                tools:src="@drawable/ic_weather_01"/>
 
             <ImageView
                 android:id="@+id/image4"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                tools:src="@drawable/a3" />
+                tools:src="@drawable/ic_weather_02"/>
 
             <ImageView
                 android:id="@+id/image5"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                tools:src="@drawable/a4" />
-            <!--<TextView-->
-            <!--android:id="@+id/info2"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:text="多云"-->
-            <!--android:textColor="#fff"-->
-            <!--android:textSize="18dp" />-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/info3"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:text="晴"-->
-            <!--android:gravity="center"-->
-            <!--android:textColor="#fff"-->
-            <!--android:textSize="18dp" />-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/info4"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:text="小雨"-->
-            <!--android:textColor="#fff"-->
-            <!--android:textSize="18dp" />-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/info5"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:text="阴"-->
-            <!--android:textColor="#fff"-->
-            <!--android:textSize="18dp" />-->
+                tools:src="@drawable/ic_weather_03"/>
         </TableRow>
 
         <TableRow android:layout_marginTop="5dp">
@@ -175,25 +148,25 @@
                 android:id="@+id/temperature2"
                 android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/temperature3"
                 android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/temperature4"
                 android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/temperature5"
                 android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
         </TableRow>
 
         <TableRow android:layout_marginTop="5dp">
@@ -202,25 +175,25 @@
                 android:id="@+id/data2"
                 android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/data3"
                 android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/data4"
                 android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/data5"
                 android:layout_gravity="center"
                 android:textColor="#fff"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
         </TableRow>
     </TableLayout>
 </RelativeLayout>

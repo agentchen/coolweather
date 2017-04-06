@@ -1,14 +1,14 @@
 package com.demo.coolweather.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageButton;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,10 +22,9 @@ import com.demo.coolweather.model.Weather;
 import com.demo.coolweather.net.OkManager;
 import com.demo.coolweather.net.callback.WeatherCallBack;
 import com.demo.coolweather.util.HttpUtil;
-import com.demo.coolweather.util.Utility;
+import com.demo.coolweather.util.IOUtil;
 
-public class WeatherActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener {
-    private TextView cityNameText;
+public class WeatherActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private TextView publishText;
     private TextView weatherDespText;
     private TextView tempText;
@@ -52,12 +51,12 @@ public class WeatherActivity extends Activity implements SwipeRefreshLayout.OnRe
     private TextView temperature4;
     private TextView temperature5;
 
-    private ImageButton ibLeft;
+    private Toolbar mToolbar;
     private static final String TAG = "WeatherActivity";
     private String cityName;
     private Weather nowWeather;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private AMapLocationClient mlocationClient;
+    private AMapLocationClient mLocationClient;
     private OkManager okManager;
 
     @Override
@@ -69,17 +68,23 @@ public class WeatherActivity extends Activity implements SwipeRefreshLayout.OnRe
         if (sp.getBoolean("isChecked", false)) {
             autoLocationWeather();
         }
-        ibLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(WeatherActivity.this, SelectCity.class);
-                startActivityForResult(intent, 1);
-            }
-        });
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swip);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
         swipeRefreshLayout.setOnRefreshListener(this);
         showWeatherCatch();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent(WeatherActivity.this, SelectCity.class);
+                startActivityForResult(intent, 1);
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -112,7 +117,7 @@ public class WeatherActivity extends Activity implements SwipeRefreshLayout.OnRe
     }
 
     private void showWeatherCatch() {
-        Utility.getWeatherInfo(this, new Utility.IOCallBack() {
+        IOUtil.getWeatherInfo(this, new IOUtil.IOCallBack() {
             @Override
             public void onFinish(Weather weather) {
                 nowWeather = weather;
@@ -126,7 +131,7 @@ public class WeatherActivity extends Activity implements SwipeRefreshLayout.OnRe
             return;
         cityName = nowWeather.getCityName();
 
-        cityNameText.setText(nowWeather.getCityName());
+        setTitle(nowWeather.getCityName());
         publishText.setText(nowWeather.getTime());
         currentDateText.setText(nowWeather.getDate());
         weatherDespText.setText(nowWeather.getInfo());
@@ -167,7 +172,7 @@ public class WeatherActivity extends Activity implements SwipeRefreshLayout.OnRe
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                Utility.saveWeatherInfo(WeatherActivity.this, nowWeather);
+                                IOUtil.saveWeatherInfo(WeatherActivity.this, nowWeather);
                             }
                         }).start();
                     } else {
@@ -207,41 +212,41 @@ public class WeatherActivity extends Activity implements SwipeRefreshLayout.OnRe
                         Log.e("AmapError", "location Error, ErrCode:"
                                 + aMapLocation.getErrorCode() + ", errInfo:"
                                 + aMapLocation.getErrorInfo());
-                        Snackbar.make(cityNameText, aMapLocation.getErrorInfo().split(" ")[0]
+                        Snackbar.make(mToolbar, aMapLocation.getErrorInfo().split(" ")[0]
                                 , Snackbar.LENGTH_SHORT).show();
                     }
                 }
-                mlocationClient.onDestroy();
+                mLocationClient.onDestroy();
             }
         });
     }
 
     private void autoLocation(AMapLocationListener aMapLocationListener) {
-        mlocationClient = new AMapLocationClient(this);
-        Log.d(TAG, "AMapLocationClient" + mlocationClient.toString());
+        mLocationClient = new AMapLocationClient(this);
+        Log.d(TAG, "AMapLocationClient" + mLocationClient.toString());
 //初始化定位参数
         AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
 //设置返回地址信息，默认为true
         mLocationOption.setNeedAddress(true);
 //设置定位监听
-        mlocationClient.setLocationListener(aMapLocationListener);
+        mLocationClient.setLocationListener(aMapLocationListener);
 //设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
         mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
 //设置定位间隔,单位毫秒,默认为2000ms
         mLocationOption.setInterval(3000);
 //设置定位参数
-        mlocationClient.setLocationOption(mLocationOption);
+        mLocationClient.setLocationOption(mLocationOption);
 // 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
 // 注意设置合适的定位时间的间隔（最小间隔支持为2000ms），并且在合适时间调用stopLocation()方法来取消定位请求
 // 在定位结束后，在合适的生命周期调用onDestroy()方法
 // 在单次定位情况下，定位无论成功与否，都无需调用stopLocation()方法移除请求，定位sdk内部会移除
 //启动定位
-        mlocationClient.startLocation();
+        mLocationClient.startLocation();
     }
 
     private void initView() {
-        ibLeft = (ImageButton) findViewById(R.id.ib_left);
-        cityNameText = (TextView) findViewById(R.id.city_name);
+        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(mToolbar);
         publishText = (TextView) findViewById(R.id.publish_text);
         weatherDespText = (TextView) findViewById(R.id.weather_desp);
         tempText = (TextView) findViewById(R.id.temp);
@@ -275,13 +280,24 @@ public class WeatherActivity extends Activity implements SwipeRefreshLayout.OnRe
             return;
         }
         if (info.equals("晴")) {
-            imageView.setImageResource(R.drawable.a1);
+            imageView.setImageResource(R.drawable.ic_weather_02);
         } else if (info.equals("多云")) {
-            imageView.setImageResource(R.drawable.a2);
+            imageView.setImageResource(R.drawable.ic_weather_03);
         } else if (info.equals("阴")) {
-            imageView.setImageResource(R.drawable.a3);
+            imageView.setImageResource(R.drawable.ic_weather_01);
+        } else if (info.contains("雨") && info.contains("晴")) {
+            imageView.setImageResource(R.drawable.ic_weather_05);
+        } else if (info.contains("雨") && info.contains("雷")) {
+            imageView.setImageResource(R.drawable.ic_weather_06);
+        } else if (info.contains("雪") && info.contains("雨")) {
+            imageView.setImageResource(R.drawable.ic_weather_11);
         } else if (info.contains("雨")) {
-            imageView.setImageResource(R.drawable.a4);
+            imageView.setImageResource(R.drawable.ic_weather_07);
+        } else if (info.contains("雪")) {
+            imageView.setImageResource(R.drawable.ic_weather_08);
+        } else if (info.contains("寒流")) {
+            imageView.setImageResource(R.drawable.ic_weather_09);
         }
     }
+
 }
